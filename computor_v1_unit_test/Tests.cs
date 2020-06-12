@@ -14,6 +14,7 @@ namespace computor_v1_unit_test
         }
 
         [TestCase(typeof(Exception), "5 * X^0 + 4 * X^1 - 9.3 * X^2 = = 1 * X^0")]
+        [TestCase(typeof(Exception), "5 * X^0 + 4 * X^1 - 9.3 * X^2 + 1 * X^0")]
         public void Error(System.Type type, string arg)
         {
             
