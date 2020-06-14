@@ -10,7 +10,7 @@ namespace computor_v1_unit_test
         [TestCase("5 * X^0 + 4 * X^1 - 9.3 * X^2 = 1 * X^0")]
         public void Test1(string arg)
         {
-            Polynomial polynomial = new Polynomial("5 * X^0 + 4 * X^1 - 9.3 * X^2 = 1 * X^0");
+            Polynomial polynomial = new Polynomial(arg);
         }
 
         [TestCase(typeof(Exception), "5 * X^0 + 4 * X^1 - 9.3 * X^2 = = 1 * X^0")]

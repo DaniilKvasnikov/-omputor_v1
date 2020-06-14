@@ -34,8 +34,19 @@ namespace сomputor_v1
                 MatchCollection matches = Regex.Matches(subString, patternBlock);
                 foreach (Match match in matches)
                 {
-                    string[] str = match.Value.Replace("*", "").Replace("^", "").Split(new []{'X'});
-                    PolynomialBlock block = new PolynomialBlock(Convert.ToDouble(str[0]), Convert.ToInt32(str[1]));
+                    string[] str = match.Value.Replace("*", "").Replace(".", ",").Replace("^", "").Split(new []{'X'});
+                    double constant;
+                    if (int.TryParse(str[0], out var intConstant))
+                        constant = intConstant;
+                    // else if (float.TryParse(str[0], out var floatConstant))
+                    //     constant = floatConstant;
+                    else if (Double.TryParse(str[0], out double number))
+                        constant = number;
+                    else
+                        throw new Exception("Cannot convert " + str[0]);
+                    if (!int.TryParse(str[1], out var exponent))
+                        throw new Exception("Cannot convert " + str[1]);
+                    PolynomialBlock block = new PolynomialBlock(constant, exponent);
                     result.Add(block);
                 }
             }
