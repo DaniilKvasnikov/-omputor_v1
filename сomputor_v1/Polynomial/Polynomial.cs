@@ -28,21 +28,31 @@ namespace сomputor_v1
                 throw new Exception("Error input: " + s);
 
             List<PolynomialBlock> result = new List<PolynomialBlock>();
-            for (var i = 0; i < subStrings.Length; i++)
+            
+            result.AddRange(GetPolynomialBlock(subStrings[0]));
+            
+            List<PolynomialBlock> right = GetPolynomialBlock(subStrings[1]);
+            foreach (var block in right)
+                block.ConstantRevert();
+            result.AddRange(right);
+            
+            return result.ToArray();
+        }
+
+        private List<PolynomialBlock> GetPolynomialBlock(string subString)
+        {
+            List<PolynomialBlock> result = new List<PolynomialBlock>();
+            MatchCollection matches = Regex.Matches(subString, patternBlock);
+            foreach (Match match in matches)
             {
-                var subString = subStrings[i];
-                MatchCollection matches = Regex.Matches(subString, patternBlock);
-                foreach (Match match in matches)
-                {
-                    string[] str = match.Value.Replace("*", "")
-                                                .Replace(".", ",")
-                                                .Replace("^", "")
-                                                .Split('X');
-                    result.Add(new PolynomialBlock(GetDouble(str[0]), GetDouble(str[1])));
-                }
+                string[] str = match.Value.Replace("*", "")
+                    .Replace(".", ",")
+                    .Replace("^", "")
+                    .Split('X');
+                result.Add(new PolynomialBlock(GetDouble(str[0]), GetDouble(str[1])));
             }
 
-            return result.ToArray();
+            return result;
         }
 
         private double GetDouble(string str)

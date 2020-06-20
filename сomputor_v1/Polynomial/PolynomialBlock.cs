@@ -15,5 +15,10 @@
         {
             return constant + " : " + exponent;
         }
+
+        public void ConstantRevert()
+        {
+            constant = -constant;
+        }
     }
 }
