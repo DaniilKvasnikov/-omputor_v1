@@ -20,5 +20,25 @@
         {
             constant = -constant;
         }
+
+        public double GetSortParam()
+        {
+            return exponent;
+        }
+
+        public double GetExponent()
+        {
+            return exponent;
+        }
+
+        public double GetConstant()
+        {
+            return constant;
+        }
+
+        public void AddConstant(double addConstant)
+        {
+            constant += addConstant;
+        }
     }
 }
