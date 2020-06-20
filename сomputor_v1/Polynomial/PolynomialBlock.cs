@@ -3,9 +3,9 @@
     public class PolynomialBlock
     {
         private double constant;
-        private int exponent;
+        private double exponent;
 
-        public PolynomialBlock(double constant, int exponent)
+        public PolynomialBlock(double constant, double exponent)
         {
             this.constant = constant;
             this.exponent = exponent;

@@ -20,7 +20,8 @@ namespace computor_v1_unit_test
             
             Assert.Throws( type, () =>
             {
-                Polynomial polynomial = new Polynomial(arg);});
+                Polynomial polynomial = new Polynomial(arg);
+            });
         }
     }
 }
