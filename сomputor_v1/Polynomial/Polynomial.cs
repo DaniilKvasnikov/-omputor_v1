@@ -22,21 +22,36 @@ namespace сomputor_v1
             polynomialBlocks = GetSubStrings(this.input);
             polynomialBlocks = CutExpression(polynomialBlocks);
             answers = GetAnswer(polynomialBlocks);
-            foreach (var subString in polynomialBlocks)
+            double[] results = CheckAnswer(answers);
+            
+            Console.Write("Reduced form: {0}\n", GetReducedForm());
+            Console.Write("Polynomial degree: {0}\n", GetPolynomialDegree());
+            Console.Write("Discriminant is strictly positive, the two solutions are:\n" +
+                          "{0}(f(x) = {2})\n" +
+                          "{1}(f(x) = {3})\n",
+                answers[0], answers[1],
+                results[0], results[1]);
+        }
+
+        private int GetPolynomialDegree()
+        {
+            return (int) polynomialBlocks.Max(e => e.GetExponent());
+        }
+
+        private string GetReducedForm()
+        {
+            string str = "";
+            for (var i = 0; i < polynomialBlocks.Length; i++)
             {
-                Console.WriteLine(subString);
-            }
-            Console.WriteLine("discriminant = " + discriminant);
-            foreach (var answer in answers)
-            {
-                Console.WriteLine("answer = " + answer);
+                var subString = polynomialBlocks[i];
+                if (polynomialBlocks[i].GetConstant() >= 0 && i > 0)
+                    str += "+";
+                str += subString;
             }
 
-            double[] results = CheckAnswer(answers);
-            foreach (var result in results)
-            {
-                Console.WriteLine("result = " + result);
-            }
+            str += "=0";
+
+            return str;
         }
 
         public double[] GetAnswers()

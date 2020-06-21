@@ -13,7 +13,8 @@
 
         public override string ToString()
         {
-            return constant + " : " + exponent;
+            string str = constant + "*X^" + exponent;
+            return str;
         }
 
         public void ConstantRevert()
