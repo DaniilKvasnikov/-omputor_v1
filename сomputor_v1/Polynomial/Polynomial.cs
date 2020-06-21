@@ -45,7 +45,7 @@ namespace сomputor_v1
 
         private int GetPolynomialDegree()
         {
-            return (int) polynomialBlocks.Max(e => e.GetExponent());
+            return polynomialBlocks.Max(e => e.GetExponent());
         }
 
         private string GetReducedForm()
@@ -130,7 +130,7 @@ namespace сomputor_v1
             foreach (var block in polynomialBlocks1)
             {
                 var to = newpolynomialBlocks.FirstOrDefault(e =>
-                    Math.Abs(e.GetExponent() - block.GetExponent()) < TOLERANCE && e != block);
+                    e.GetExponent() == block.GetExponent() && e != block);
                 if (to == null)
                     newpolynomialBlocks.Add(block);
                 else
@@ -168,7 +168,7 @@ namespace сomputor_v1
                     .Replace(".", ",")
                     .Replace("^", "")
                     .Split('X');
-                result.Add(new PolynomialBlock(GetDouble(str[0]), GetDouble(str[1])));
+                result.Add(new PolynomialBlock(GetDouble(str[0]), GetInt(str[1])));
             }
 
             return result;
@@ -177,6 +177,13 @@ namespace сomputor_v1
         private double GetDouble(string str)
         {
             if (!double.TryParse(str, out var res))
+                throw new Exception("Cannot convert " + str);
+            return res;
+        }
+        
+        private int GetInt(string str)
+        {
+            if (!int.TryParse(str, out var res))
                 throw new Exception("Cannot convert " + str);
             return res;
         }
