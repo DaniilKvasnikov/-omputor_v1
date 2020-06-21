@@ -14,7 +14,6 @@ namespace computor_v1_unit_test
         [TestCase("5 * X^0 - 9.3 * X^2 = 1 * X^0")]
         [TestCase("5 * X^0 + 4 * X^1 = 4 * X^0")]
         [TestCase("5 * X^0 = 4 * X^0 + 7 * X^1")]
-        [TestCase("-5 * X^2 = 4")]
         [TestCase("2*X^2 = 4 * x^0")]
         [TestCase("5 * X ^ 0 = 4 * X ^ 0 + 7 * X ^ 1")]
         [TestCase("5 * X ^ 0 + 13 * X ^ 1 + 3 * X ^ 2 = 1 * X ^ 0 + 1 * X ^ 1")]

@@ -14,12 +14,15 @@ namespace сomputor_v1
         private const float TOLERANCE = 0.001f;
 
         private static string patternBlock = "([-]?([0-9]*(,[0-9])*(\\.[0-9]+)?)[*]X[\\^][0-9])";
+        private static string patternString = "([-]?([0-9]*(,[0-9])*(\\.[0-9]+)?)[*]X[\\^][0-9])=([-]?([0-9]*(,[0-9])*(\\.[0-9]+)?)[*]X[\\^][0-9])";
 
         public Polynomial(string input)
         {
             try
             {
                 this.input = StringPreprocess(input);
+                if (!CorrectInput(this.input))
+                    throw new Exception(string.Format("Error format string: {0}\n", this.input));
                 polynomialBlocks = GetSubStrings(this.input);
                 polynomialBlocks = CutExpression(polynomialBlocks);
                 Console.Write("Reduced form: {0}\n", GetReducedForm());
@@ -41,6 +44,12 @@ namespace сomputor_v1
                 Console.WriteLine(e.Message);
                 throw;
             }
+        }
+
+        public static bool CorrectInput(string input)
+        {
+            input = StringPreprocess(input);
+            return Regex.IsMatch(input, patternString);
         }
 
         private int GetPolynomialDegree()
@@ -203,7 +212,7 @@ namespace сomputor_v1
             return res;
         }
 
-        private string StringPreprocess(string s)
+        public static string StringPreprocess(string s)
         {
             return s
                 .Replace(" ", "")
