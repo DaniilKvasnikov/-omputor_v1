@@ -18,19 +18,30 @@ namespace сomputor_v1
 
         public Polynomial(string input)
         {
-            this.input = StringPreprocess(input);
-            polynomialBlocks = GetSubStrings(this.input);
-            polynomialBlocks = CutExpression(polynomialBlocks);
-            answers = GetAnswer(polynomialBlocks);
-            double[] results = CheckAnswer(answers);
-            
-            Console.Write("Reduced form: {0}\n", GetReducedForm());
-            Console.Write("Polynomial degree: {0}\n", GetPolynomialDegree());
-            Console.Write("Discriminant is strictly positive, the two solutions are:\n" +
-                          "{0}(f(x) = {2})\n" +
-                          "{1}(f(x) = {3})\n",
-                answers[0], answers[1],
-                results[0], results[1]);
+            try
+            {
+                this.input = StringPreprocess(input);
+                polynomialBlocks = GetSubStrings(this.input);
+                polynomialBlocks = CutExpression(polynomialBlocks);
+                Console.Write("Reduced form: {0}\n", GetReducedForm());
+                var degree = GetPolynomialDegree();
+                Console.Write("Polynomial degree: {0}\n", degree);
+                answers = GetAnswer(degree);
+                double[] results = CheckAnswer(answers);
+
+                Console.WriteLine("Discriminant is strictly positive, the solutions are:");
+                for (var i = 0; i < answers.Length; i++)
+                {
+                    var answer = answers[i];
+                    var result = results[i];
+                    Console.WriteLine("{0}(f(x) = {1})", answer, result);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                throw;
+            }
         }
 
         private int GetPolynomialDegree()
@@ -75,13 +86,41 @@ namespace сomputor_v1
             return results;
         }
 
-        private double[] GetAnswer(PolynomialBlock[] polynomialBlocks1)
+        private double[] GetAnswer(int degree)
         {
-            double a = polynomialBlocks1.FirstOrDefault(block => block.GetExponent() == 2f).GetConstant();
-            double b = polynomialBlocks1.FirstOrDefault(block => block.GetExponent() == 1f).GetConstant();
-            double c = polynomialBlocks1.FirstOrDefault(block => block.GetExponent() == 0f).GetConstant();
+            switch (degree)
+            {
+                case 2:
+                    return SolveQuadratic();
+                case 1:
+                    return SolveLinear();
+                case 0:
+                    throw new Exception("Each real number is a solution.");
+            }
+            throw new Exception("The polynomial degree is strictly greater than 2, I can't solve.");
+        }
+
+        private double[] SolveLinear()
+        {
+            double b = GetParam(1);
+            double c = GetParam(0);
+            return new []{-c/b};
+        }
+
+        private double[] SolveQuadratic()
+        {
+            double a = GetParam(2);
+            double b = GetParam(1);
+            double c = GetParam(0);
             double discriminant = b * b - 4 * a * c;
+            if (discriminant < 0)
+                throw new Exception("discriminant(" + discriminant + ")<0. A negative discriminant indicates that neither of the solutions are real numbers.)");
             return new []{(-b + Math.Sqrt(discriminant)) / (2 * a), (-b - Math.Sqrt(discriminant)) / (2 * a)};
+        }
+
+        private double GetParam(int i)
+        {
+            return polynomialBlocks.FirstOrDefault(block => block.GetExponent() == i)?.GetConstant() ?? 0;
         }
 
         private PolynomialBlock[] CutExpression(PolynomialBlock[] polynomialBlocks1)
@@ -143,7 +182,9 @@ namespace сomputor_v1
 
         private string StringPreprocess(string s)
         {
-            return s.Replace(" ", "");
+            return s
+                .Replace(" ", "")
+                .ToUpper();
         }
     }
 }
