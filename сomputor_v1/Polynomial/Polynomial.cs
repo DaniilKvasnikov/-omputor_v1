@@ -9,7 +9,6 @@ namespace сomputor_v1
     {
         private string input;
         private PolynomialBlock[] polynomialBlocks;
-        private double discriminant;
         private double[] answers;
 
         private const float TOLERANCE = 0.001f;

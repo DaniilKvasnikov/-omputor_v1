@@ -15,10 +15,11 @@ namespace computor_v1_unit_test
         [TestCase("5 * X^0 + 4 * X^1 = 4 * X^0")]
         [TestCase("5 * X^0 = 4 * X^0 + 7 * X^1")]
         [TestCase("-5 * X^2 = 4")]
+        [TestCase("2*X^2 = 4 * x^0")]
         public void Test1(string arg)
         {
             Polynomial polynomial = new Polynomial(arg);
-            var res = polynomial.CheckAnswer(polynomial.GetAnswers()).Where(e => Math.Abs(e) > 0.001f).ToArray();
+            var res = polynomial.CheckAnswer(polynomial.GetAnswers()).Where(e => Math.Abs(e) > 0.0001f).ToArray();
             Assert.IsEmpty(res);
         }
         
@@ -31,6 +32,8 @@ namespace computor_v1_unit_test
         [TestCase(typeof(Exception), "6 * X^0 + 11 * x^1 + 5 * x^2 = 1 * X^0 + 1 * X^1")]
         [TestCase(typeof(Exception), "5 * X^0 + 3 * x^1 + 3 * x^2 = 1 * X^0 + 0 * X^1")]
         [TestCase(typeof(Exception), "20*X^0 = 0")]
+        [TestCase(typeof(Exception), "2*X^2 = 4")]
+        [TestCase(typeof(Exception), "2*X^2 = 4 * x")]
         [TestCase(typeof(Exception), "")]
         public void DegreeError(System.Type type, string arg)
         {

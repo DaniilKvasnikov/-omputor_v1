@@ -7,11 +7,17 @@ namespace сomputor_v1
     {
         public static void Main(string[] args)
         {
+            if (args.Length != 1)
+            {
+                Console.WriteLine("Example: сomputor_v1.exe \"5 * X^0 + 4 * X^1 - 9.3 * X^2 = 1 * X^0\"");
+                return;
+            }
+
             foreach (var arg in args)
             {
                 try
                 {
-                    Polynomial polynomial = new Polynomial(arg);
+                    new Polynomial(arg);
                 }
                 catch (Exception e)
                 {
@@ -19,8 +25,6 @@ namespace сomputor_v1
                 }
             }
 
-            if (args.Length == 0)
-                Console.WriteLine("No arg");
         }
     }
 }
