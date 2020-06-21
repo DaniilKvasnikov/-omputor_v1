@@ -115,6 +115,8 @@ namespace сomputor_v1
             double discriminant = b * b - 4 * a * c;
             if (discriminant < 0)
                 throw new Exception("discriminant(" + discriminant + ")<0. A negative discriminant indicates that neither of the solutions are real numbers.)");
+            if (discriminant == 0)
+                return new []{-b / (2 * a)};
             return new []{(-b + Math.Sqrt(discriminant)) / (2 * a), (-b - Math.Sqrt(discriminant)) / (2 * a)};
         }
 
