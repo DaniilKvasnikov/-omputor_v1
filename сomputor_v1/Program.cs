@@ -19,9 +19,8 @@ namespace сomputor_v1
                 {
                     new Polynomial(arg);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
-                    Console.WriteLine(e.Message);
                 }
             }
 
