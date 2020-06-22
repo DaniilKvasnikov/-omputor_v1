@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Text.RegularExpressions;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
 using сomputor_v1;
@@ -9,7 +10,7 @@ namespace computor_v1_unit_test
     [TestFixture]
     public class Tests
     {
-        [TestCase("5 * X^0 + 4 * X^1 - 9.3 * X^2 = 1 * X^0")]
+        [TestCase("5 * X^0 + 4 * X^1 - 9.3 * X^2 = 1 * X^0")] 
         [TestCase("5 * x^0 + 4 * x^1 - 9.3 * x^2 = 1 * x^0")]
         [TestCase("5 * X^0 - 9.3 * X^2 = 1 * X^0")]
         [TestCase("5 * X^0 + 4 * X^1 = 4 * X^0")]
@@ -47,6 +48,40 @@ namespace computor_v1_unit_test
         public void Error(System.Type type, string arg)
         {
             Assert.Throws( type, () => new Polynomial(arg));
+        }
+
+        [TestCase("8 * X^0 - 6 * X^1 + 0 * X^2 - 5.6 * X^3 = 3 * X^0")]
+        [TestCase("42*X^0 = 42*X^0")]
+        [TestCase("2*X^2-3*X+4*X^0=0")]
+        [TestCase("5 * X^0 = 5 * X^0")]
+        [TestCase("4 * X^0 = 8")]
+        [TestCase("5 * X^0 + 3 * x^1 + 3 * x^2 = 1 * X^0 + 0 * X^1")]
+        [TestCase("20*X^0 = 0")]
+        [TestCase("2*X^2 = 4")]
+        [TestCase("2*X^2 = 4 * x")]
+        [TestCase("5 * X ^ 0 + 3 * X ^ 1 + 3 * X ^ 2 = 1 * X ^ 0 + 0 *  X ^ 1")]
+        [TestCase("0 = 0")]
+        [TestCase("1*x= 0")]
+        [TestCase("2x = 0")]
+        [TestCase("3x^0 = 0")]
+        [TestCase("4*x^2 = 0")]
+        [TestCase("-x = 0")]
+        [TestCase("", false)]
+        [TestCase("0^1 = 0", false)]
+        public void TestRegex(string str, bool res = true)
+        {
+            string pattern = Polynomial.patternFull;
+            string patternElements = Polynomial.patternBlock;
+            str = str.Replace(" ", "").ToUpper();
+            var currReg = Regex.IsMatch(str, pattern);
+            var currFloat = Regex.IsMatch(str, patternElements);
+            Console.WriteLine($"({pattern}) -> {currReg}");
+            Console.WriteLine($"({patternElements}) -> {currFloat}");
+            foreach (Match match in Regex.Matches(str, patternElements))
+            {
+                Console.WriteLine($"{match.Value}");
+            }
+            Assert.IsTrue(currReg == res);
         }
     }
 }

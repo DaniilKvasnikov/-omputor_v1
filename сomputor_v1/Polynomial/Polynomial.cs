@@ -13,8 +13,8 @@ namespace сomputor_v1
 
         private const float TOLERANCE = 0.001f;
 
-        private static string patternBlock = "([-]?([0-9]*(,[0-9])*(\\.[0-9]+)?)[*]X[\\^][0-9])";
-        private static string patternString = "([-]?([0-9]*(,[0-9])*(\\.[0-9]+)?)[*]X[\\^][0-9])=([-]?([0-9]*(,[0-9])*(\\.[0-9]+)?)[*]X[\\^][0-9])";
+        public static string patternBlock = "[\\+-]?(\\d+(\\.\\d+)?)?(\\*?X(\\^\\d+)?)?";
+        public static string patternFull = $"({patternBlock})+=({patternBlock})+";
 
         public Polynomial(string input)
         {
@@ -49,7 +49,8 @@ namespace сomputor_v1
         public static bool CorrectInput(string input)
         {
             input = StringPreprocess(input);
-            return Regex.IsMatch(input, patternString);
+            var IsMatch = Regex.IsMatch(input, patternBlock);
+            return IsMatch;
         }
 
         private int GetPolynomialDegree()
@@ -188,10 +189,14 @@ namespace сomputor_v1
             MatchCollection matches = Regex.Matches(subString, patternBlock);
             foreach (Match match in matches)
             {
+                if (match.Value.Length == 0)
+                    continue;
                 string[] str = match.Value.Replace("*", "")
                     .Replace(".", ",")
                     .Replace("^", "")
+                    .Replace("+", "")
                     .Split('X');
+                Console.WriteLine($"{str}");
                 result.Add(new PolynomialBlock(GetDouble(str[0]), GetInt(str[1])));
             }
 
