@@ -10,11 +10,11 @@ namespace сomputor_v1
         private string input;
         private PolynomialBlock[] polynomialBlocks;
         private double[] answers;
-
-        private const float TOLERANCE = 0.001f;
-
-        public static string patternBlock = "[\\+-]?(\\d+(\\.\\d+)?)?(\\*?X(\\^\\d+)?)?";
-        public static string patternFull = $"({patternBlock})+=({patternBlock})+";
+        
+        public static string floatP = "-?\\d*(\\.?\\d+)?";
+        public static string patternBlock = $"(({floatP}|-)?\\*?X(\\^{floatP})?)|({floatP})";
+        
+        public static string patternFull = $"^{patternBlock}={patternBlock}$";
 
         public Polynomial(string input)
         {
@@ -23,12 +23,16 @@ namespace сomputor_v1
                 this.input = StringPreprocess(input);
                 if (!CorrectInput(this.input))
                     throw new Exception(string.Format("Error format string: {0}\n", this.input));
-                polynomialBlocks = GetSubStrings(this.input);
-                polynomialBlocks = CutExpression(polynomialBlocks);
+                
+                polynomialBlocks = InitPolynomialBlocks(this.input);
+                
                 Console.Write("Reduced form: {0}\n", GetReducedForm());
+                
                 var degree = GetPolynomialDegree();
                 Console.Write("Polynomial degree: {0}\n", degree);
+                
                 answers = GetAnswer(degree);
+                
                 double[] results = CheckAnswer(answers);
 
                 Console.WriteLine("Discriminant is strictly positive, the solutions are:");
@@ -36,7 +40,7 @@ namespace сomputor_v1
                 {
                     var answer = answers[i];
                     var result = results[i];
-                    Console.WriteLine("{0}(f(x) = {1})", answer, result);
+                    Console.WriteLine("x={0}(f(x) = {1})", answer, result);
                 }
             }
             catch (Exception e)
@@ -44,6 +48,11 @@ namespace сomputor_v1
                 Console.WriteLine(e.Message);
                 throw;
             }
+        }
+
+        private PolynomialBlock[] InitPolynomialBlocks(string input)
+        {
+            return CutExpression(GetSubStrings(input));
         }
 
         public static bool CorrectInput(string input)
@@ -113,7 +122,7 @@ namespace сomputor_v1
         private void ZerroExponent()
         {
             double c = GetParam(0);
-            if (c == 0)
+            if (c != 0)
                 throw new Exception("Each real number is a solution.");
             else
                 throw new Exception("There are no solutions.");
@@ -162,7 +171,10 @@ namespace сomputor_v1
                     to.AddConstant(block.GetConstant());
             }
 
-            return newpolynomialBlocks.OrderBy(e => e.GetSortParam()).ToArray();
+            return newpolynomialBlocks
+                .OrderBy(e => e.GetSortParam())
+                // .Where(e => e.GetConstant() != 0)
+                .ToArray();
         }
 
         private PolynomialBlock[] GetSubStrings(string s)
@@ -191,14 +203,19 @@ namespace сomputor_v1
             {
                 if (match.Value.Length == 0)
                     continue;
-                string[] str = match.Value.Replace("*", "")
+                string[] str = match.Value
                     .Replace(".", ",")
-                    .Replace("^", "")
                     .Replace("+", "")
-                    .Split('X');
-                Console.WriteLine($"{str}");
-                result.Add(new PolynomialBlock(GetDouble(str[0]), GetInt(str[1])));
+                    .Split(new []{'X', '*', '^'})
+                    .Where(s => s.Length > 0)
+                    .ToArray();
+                //TODO: more variants
+                Console.Write($"({str})");
+                double constant = GetDouble(str[0]);
+                int exponent = str.Length == 2 ? GetInt(str[1]) : 1;
+                result.Add(new PolynomialBlock(constant, exponent));
             }
+            Console.WriteLine($"");
 
             return result;
         }
@@ -219,9 +236,8 @@ namespace сomputor_v1
 
         public static string StringPreprocess(string s)
         {
-            return s
-                .Replace(" ", "")
-                .ToUpper();
+            return s.Replace(" ", "")
+                    .ToUpper();
         }
     }
 }
