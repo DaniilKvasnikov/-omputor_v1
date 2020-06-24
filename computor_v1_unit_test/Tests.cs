@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
 using сomputor_v1;
+using сomputor_v1.Exception;
 
 namespace computor_v1_unit_test
 {
@@ -118,5 +119,17 @@ namespace computor_v1_unit_test
 
             Assert.IsTrue(currFloat == res);
         }
+        
+        [TestCase(typeof(ExceptionStringFormat), "5 * X^0 + 4 * X^1 - 9.3 * X^2 = = 1 * X^0")]
+        [TestCase(typeof(ExceptionEachRealNumber), "0 = 0")]
+        [TestCase(typeof(ExceptionNoSolutions), "1 = 0")]
+        [TestCase(typeof(ExceptionDegreeLimit), "1x^3 = 0")]
+        [TestCase(typeof(ExceptionNegativeDiscriminant), "9x2 − 6x + 2 = 0")]
+        [TestCase(typeof(ExceptionNegativeDiscriminant), "9x.2 = 0")]
+        public void ExceptionTest(System.Type type, string arg)
+        {
+            Assert.Throws( type, () => new Polynomial(arg));
+        }
+
     }
 }

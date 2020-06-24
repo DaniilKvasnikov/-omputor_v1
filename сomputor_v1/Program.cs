@@ -19,7 +19,7 @@ namespace сomputor_v1
                 {
                     new Polynomial(arg);
                 }
-                catch (Exception)
+                catch (System.Exception)
                 {
                 }
             }

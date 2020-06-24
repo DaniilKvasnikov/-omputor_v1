@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using сomputor_v1.Exception;
 
 namespace сomputor_v1
 {
@@ -12,7 +13,8 @@ namespace сomputor_v1
         private double[] answers;
         
         public static string floatP = "-?\\d*(\\.?\\d+)?";
-        public static string patternBlock = $"(({floatP}|-)?\\*?X(\\^{floatP})?)|({floatP})";
+        public static string intP = "\\d+";
+        public static string patternBlock = $"(({floatP}|-)?\\*?X(\\^?{intP})?)|({floatP})";
         
         public static string patternFull = $"^{patternBlock}={patternBlock}$";
 
@@ -22,7 +24,7 @@ namespace сomputor_v1
             {
                 this.input = StringPreprocess(input);
                 if (!CorrectInput(this.input))
-                    throw new Exception(string.Format("Error format string: {0}\n", this.input));
+                    throw new ExceptionStringFormat(this.input);
                 
                 polynomialBlocks = InitPolynomialBlocks(this.input);
                 
@@ -34,8 +36,7 @@ namespace сomputor_v1
                 answers = GetAnswer(degree);
                 
                 double[] results = CheckAnswer(answers);
-
-                Console.WriteLine("Discriminant is strictly positive, the solutions are:");
+                Console.WriteLine("The solutions are:");
                 for (var i = 0; i < answers.Length; i++)
                 {
                     var answer = answers[i];
@@ -43,7 +44,7 @@ namespace сomputor_v1
                     Console.WriteLine("x={0}(f(x) = {1})", answer, result);
                 }
             }
-            catch (Exception e)
+            catch (System.Exception e)
             {
                 Console.WriteLine(e.Message);
                 throw;
@@ -52,7 +53,21 @@ namespace сomputor_v1
 
         private PolynomialBlock[] InitPolynomialBlocks(string input)
         {
-            return CutExpression(GetSubStrings(input));
+            PolynomialBlock[] polynomialBlocks = GetSubStrings(input);
+            PrintPolynomialBlocks(polynomialBlocks, "Parsing result");
+            polynomialBlocks = CutExpression(polynomialBlocks);
+            PrintPolynomialBlocks(polynomialBlocks, "Expression and sort result");
+            return polynomialBlocks;
+        }
+
+        private void PrintPolynomialBlocks(PolynomialBlock[] polynomialBlocks, string Name)
+        {
+            Console.Write($"{Name}: ");
+            foreach (PolynomialBlock polynomialBlock in polynomialBlocks)
+            {
+                Console.Write($"({polynomialBlock})");
+            }
+            Console.WriteLine("");
         }
 
         public static bool CorrectInput(string input)
@@ -116,44 +131,45 @@ namespace сomputor_v1
                     ZerroExponent();
                     break;
             }
-            throw new Exception("The polynomial degree is strictly greater than 2, I can't solve.");
+            throw new ExceptionDegreeLimit("The polynomial degree is strictly greater than 2, I can't solve.");
         }
 
         private void ZerroExponent()
         {
-            double c = GetParam(0);
-            if (c != 0)
-                throw new Exception("Each real number is a solution.");
+            double c = GetConstant(0);
+            if (c == 0)
+                throw new ExceptionEachRealNumber("Each real number is a solution.");
             else
-                throw new Exception("There are no solutions.");
+                throw new ExceptionNoSolutions("There are no solutions.");
         }
 
         private double[] SolveLinear()
         {
-            double b = GetParam(1);
-            double c = GetParam(0);
+            double b = GetConstant(1);
+            double c = GetConstant(0);
             return new []{-c/b};
         }
 
         private double[] SolveQuadratic()
         {
-            double a = GetParam(2);
-            double b = GetParam(1);
-            double c = GetParam(0);
+            double a = GetConstant(2);
+            double b = GetConstant(1);
+            double c = GetConstant(0);
             double discriminant = b * b - 4 * a * c;
             if (discriminant < 0)
             {
                 var exception = string.Format("discriminant({2})<0. " +
                                               "A negative discriminant indicates that neither of the solutions are real numbers.)" +
                                               "\nAnd answer is (-{0} ± √{1}) / {2}", b, discriminant, 2 * a);
-                throw new Exception(exception);
+                throw new ExceptionNegativeDiscriminant(exception);
             }
+            Console.WriteLine($"Discriminant {discriminant}");
             if (discriminant == 0)
                 return new []{-b / (2 * a)};
             return new []{(-b + Math.Sqrt(discriminant)) / (2 * a), (-b - Math.Sqrt(discriminant)) / (2 * a)};
         }
 
-        private double GetParam(int i)
+        private double GetConstant(int i)
         {
             return polynomialBlocks.FirstOrDefault(block => block.GetExponent() == i)?.GetConstant() ?? 0;
         }
@@ -171,9 +187,10 @@ namespace сomputor_v1
                     to.AddConstant(block.GetConstant());
             }
 
+            var size = newpolynomialBlocks.Count;
             return newpolynomialBlocks
                 .OrderBy(e => e.GetSortParam())
-                // .Where(e => e.GetConstant() != 0)
+                .Where(e => e.GetConstant() != 0 || size == 1)
                 .ToArray();
         }
 
@@ -181,7 +198,7 @@ namespace сomputor_v1
         {
             var subStrings = s.Split(new[] {'='});
             if (subStrings.Length != 2)
-                throw new Exception("Error input: " + s);
+                throw new ExceptionStringFormat(s);
 
             List<PolynomialBlock> result = new List<PolynomialBlock>();
             
@@ -210,28 +227,24 @@ namespace сomputor_v1
                     .Where(s => s.Length > 0)
                     .ToArray();
                 //TODO: more variants
-                Console.Write($"({str})");
                 double constant = GetDouble(str[0]);
-                int exponent = str.Length == 2 ? GetInt(str[1]) : 1;
+                int exponent = str.Length == 2 ? GetInt(str[1]) : match.Value.Contains('X') ? 1 : 0;
                 result.Add(new PolynomialBlock(constant, exponent));
             }
-            Console.WriteLine($"");
 
             return result;
         }
 
         private double GetDouble(string str)
         {
-            if (!double.TryParse(str, out var res))
-                throw new Exception("Cannot convert " + str);
-            return res;
+            if (str.Equals("-"))
+                return -1.0;
+            return double.Parse(str);
         }
         
         private int GetInt(string str)
         {
-            if (!int.TryParse(str, out var res))
-                throw new Exception("Cannot convert " + str);
-            return res;
+            return int.Parse(str);
         }
 
         public static string StringPreprocess(string s)

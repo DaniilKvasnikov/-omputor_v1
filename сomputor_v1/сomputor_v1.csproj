@@ -38,6 +38,11 @@
         <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="Exception\ExceptionDegreeLimit.cs" />
+        <Compile Include="Exception\ExceptionEachRealNumber.cs" />
+        <Compile Include="Exception\ExceptionNegativeDiscriminant.cs" />
+        <Compile Include="Exception\ExceptionStringFormat.cs" />
+        <Compile Include="Exception\ExceptionNoSolutions.cs" />
         <Compile Include="Polynomial\Polynomial.cs" />
         <Compile Include="Polynomial\PolynomialBlock.cs" />
         <Compile Include="Program.cs" />
