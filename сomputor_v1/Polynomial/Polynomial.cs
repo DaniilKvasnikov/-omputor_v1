@@ -14,7 +14,7 @@ namespace сomputor_v1
         
         public static string floatP = "-?\\d*(\\.?\\d+)?";
         public static string intP = "\\d+";
-        public static string patternBlock = $"(({floatP}|-)?\\*?X(\\^?{intP})?)|({floatP})";
+        public static string patternBlock = $"(^|\\+|-)(({floatP}|-)?\\*?X(\\^{floatP})?)|({floatP})";
         
         public static string patternFull = $"^{patternBlock}={patternBlock}$";
 
@@ -72,7 +72,6 @@ namespace сomputor_v1
 
         public static bool CorrectInput(string input)
         {
-            input = StringPreprocess(input);
             var IsMatch = Regex.IsMatch(input, patternBlock);
             return IsMatch;
         }
@@ -220,15 +219,11 @@ namespace сomputor_v1
             {
                 if (match.Value.Length == 0)
                     continue;
-                string[] str = match.Value
-                    .Replace(".", ",")
-                    .Replace("+", "")
-                    .Split(new []{'X', '*', '^'})
-                    .Where(s => s.Length > 0)
-                    .ToArray();
+                var matchBlock = Regex.Match(match.Value, $"((\\*?X\\^?))");
+                string[] strs = matchBlock.Value.Length == 0 ? new []{match.Value, "", "0"} : match.Value.Replace(matchBlock.Value, $" {matchBlock.Value} ").Split(' ');
                 //TODO: more variants
-                double constant = GetDouble(str[0]);
-                int exponent = str.Length == 2 ? GetInt(str[1]) : match.Value.Contains('X') ? 1 : 0;
+                double constant = strs[0].Equals("") ? 1 : GetDouble(strs[0].Replace(".", ","));
+                int exponent = !strs[2].Equals("") ? GetInt(strs[2]) : strs[1].Equals(matchBlock.Value) ? 1 : 0;
                 result.Add(new PolynomialBlock(constant, exponent));
             }
 
@@ -239,17 +234,22 @@ namespace сomputor_v1
         {
             if (str.Equals("-"))
                 return -1.0;
-            return double.Parse(str);
+            if (!double.TryParse(str, out var res))
+                throw new FormatException($"Double format error: {str}");
+            return res;
         }
         
         private int GetInt(string str)
         {
-            return int.Parse(str);
+            if (!int.TryParse(str, out var res))
+                throw new FormatException($"Int format error: {str}");
+            return res;
         }
 
         public static string StringPreprocess(string s)
         {
             return s.Replace(" ", "")
+                    .Replace("²", "^2")
                     .ToUpper();
         }
     }
