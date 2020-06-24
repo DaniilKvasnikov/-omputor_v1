@@ -12,9 +12,9 @@ namespace сomputor_v1
         private PolynomialBlock[] polynomialBlocks;
         private double[] answers;
         
-        public static string floatP = "-?\\d*(\\.?\\d+)?";
+        public static string floatP = "\\d*(\\.?\\d+)?";
         public static string intP = "\\d+";
-        public static string patternBlock = $"(^|\\+|-)(({floatP}|-)?\\*?X(\\^{floatP})?)|({floatP})";
+        public static string patternBlock = $"(^|\\+|-)(({floatP}|-)?\\*?X(\\^?{floatP})?)|((^|\\+|-){floatP})";
         
         public static string patternFull = $"^{patternBlock}={patternBlock}$";
 
@@ -235,14 +235,14 @@ namespace сomputor_v1
             if (str.Equals("-"))
                 return -1.0;
             if (!double.TryParse(str, out var res))
-                throw new FormatException($"Double format error: {str}");
+                throw new ExceptionStringFormat($"Double format error: {str}");
             return res;
         }
         
         private int GetInt(string str)
         {
             if (!int.TryParse(str, out var res))
-                throw new FormatException($"Int format error: {str}");
+                throw new ExceptionStringFormat($"Int format error: {str}");
             return res;
         }
 

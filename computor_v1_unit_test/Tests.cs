@@ -158,7 +158,7 @@ namespace computor_v1_unit_test
         [TestCase(typeof(ExceptionNegativeDiscriminant), "9.1x^2 − 6x + 2 = 0")]
         [TestCase(typeof(ExceptionNegativeDiscriminant), "9x² + 49 = 0")]
         [TestCase(typeof(ExceptionNegativeDiscriminant), "-2x² - 4 = 0")]
-        [TestCase(typeof(System.FormatException), "9.1x^.2 = 0")]
+        [TestCase(typeof(ExceptionStringFormat), "9.1x^.2 = 0")]
         [TestCase(typeof(ExceptionStringFormat), "9.1x.2 = 0")]
         public void ExceptionTest(System.Type type, string arg)
         {
