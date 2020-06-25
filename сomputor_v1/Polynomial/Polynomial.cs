@@ -4,19 +4,18 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using сomputor_v1.Exception;
 
-namespace сomputor_v1
+namespace сomputor_v1.Polynomial
 {
     public class Polynomial
     {
         private string input;
         private PolynomialBlock[] polynomialBlocks;
         private double[] answers;
+        private Solver solver;
         
-        public static string floatP = "\\d*(\\.?\\d+)?";
-        public static string intP = "\\d+";
-        public static string patternBlock = $"(^|\\+|-)(({floatP}|-)?\\*?X(\\^?{floatP})?)|((^|\\+|-){floatP})";
-        
-        public static string patternFull = $"^{patternBlock}={patternBlock}$";
+        public static string patternFloat = "\\d*(\\.\\d+)?";
+        public static string patternBlock = $@"(^|\+|-)(({patternFloat}|-)?\*?X(\^?{patternFloat})?)|((^|\+|-){patternFloat})";
+        public static string patternFull = $@"({patternBlock})+({patternBlock})+";
 
         public Polynomial(string input)
         {
@@ -27,15 +26,16 @@ namespace сomputor_v1
                     throw new ExceptionStringFormat(this.input);
                 
                 polynomialBlocks = InitPolynomialBlocks(this.input);
+                solver = new Solver(polynomialBlocks);
                 
                 Console.Write("Reduced form: {0}\n", GetReducedForm());
                 
                 var degree = GetPolynomialDegree();
                 Console.Write("Polynomial degree: {0}\n", degree);
                 
-                answers = GetAnswer(degree);
+                answers = solver.GetAnswer(degree);
                 
-                double[] results = CheckAnswer(answers);
+                double[] results = solver.CheckAnswer(answers);
                 Console.WriteLine("The solutions are:");
                 for (var i = 0; i < answers.Length; i++)
                 {
@@ -72,8 +72,11 @@ namespace сomputor_v1
 
         public static bool CorrectInput(string input)
         {
-            var IsMatch = Regex.IsMatch(input, patternBlock);
-            return IsMatch;
+            var pattern = patternFull;
+            var IsMatch = Regex.IsMatch(input, pattern);
+            var matches = Regex.Matches(input, pattern);
+            string[] matchesString = (from Match match in matches select match.Value).Where(e => e.Length > 0).ToArray();
+            return IsMatch && matchesString.Length > 0;
         }
 
         private int GetPolynomialDegree()
@@ -102,77 +105,6 @@ namespace сomputor_v1
             return answers;
         }
 
-        public double[] CheckAnswer(double[] doubles)
-        {
-            double[] results = new double[doubles.Length];
-            for (var i = 0; i < doubles.Length; i++)
-            {
-                var d = doubles[i];
-                results[i] = 0f;
-                foreach (var block in polynomialBlocks)
-                {
-                    results[i] += block.GetConstant() * Math.Pow(d, block.GetExponent());
-                }
-            }
-
-            return results;
-        }
-
-        private double[] GetAnswer(int degree)
-        {
-            switch (degree)
-            {
-                case 2:
-                    return SolveQuadratic();
-                case 1:
-                    return SolveLinear();
-                case 0:
-                    ZerroExponent();
-                    break;
-            }
-            throw new ExceptionDegreeLimit("The polynomial degree is strictly greater than 2, I can't solve.");
-        }
-
-        private void ZerroExponent()
-        {
-            double c = GetConstant(0);
-            if (c == 0)
-                throw new ExceptionEachRealNumber("Each real number is a solution.");
-            else
-                throw new ExceptionNoSolutions("There are no solutions.");
-        }
-
-        private double[] SolveLinear()
-        {
-            double b = GetConstant(1);
-            double c = GetConstant(0);
-            return new []{-c/b};
-        }
-
-        private double[] SolveQuadratic()
-        {
-            double a = GetConstant(2);
-            double b = GetConstant(1);
-            double c = GetConstant(0);
-            double discriminant = b * b - 4 * a * c;
-            if (discriminant < 0)
-            {
-                var exception = string.Format("discriminant({2})<0. " +
-                                              "A negative discriminant indicates that neither of the solutions are real numbers.)" +
-                                              "\nAnd answer is (-{0} ± √{1}) / {2}", b, discriminant, 2 * a);
-                throw new ExceptionNegativeDiscriminant(exception);
-            }
-            Console.WriteLine($"Discriminant {discriminant}");
-            if (discriminant == 0)
-                return new []{-b / (2 * a)};
-            return new []{(-b + Math.Sqrt(discriminant)) / (2 * a), (-b - Math.Sqrt(discriminant)) / (2 * a)};
-        }
-
-        private double GetConstant(int i)
-        {
-            return polynomialBlocks.FirstOrDefault(block => block.GetExponent() == i)?.GetConstant() ?? 0;
-        }
-
         private PolynomialBlock[] CutExpression(PolynomialBlock[] polynomialBlocks1)
         {
             List<PolynomialBlock> newpolynomialBlocks = new List<PolynomialBlock>();
@@ -188,7 +120,7 @@ namespace сomputor_v1
 
             var size = newpolynomialBlocks.Count;
             return newpolynomialBlocks
-                .OrderBy(e => e.GetSortParam())
+                .OrderBy(e => e.GetExponent())
                 .Where(e => e.GetConstant() != 0 || size == 1)
                 .ToArray();
         }
@@ -217,11 +149,8 @@ namespace сomputor_v1
             MatchCollection matches = Regex.Matches(subString, patternBlock);
             foreach (Match match in matches)
             {
-                if (match.Value.Length == 0)
-                    continue;
                 var matchBlock = Regex.Match(match.Value, $"((\\*?X\\^?))");
                 string[] strs = matchBlock.Value.Length == 0 ? new []{match.Value, "", "0"} : match.Value.Replace(matchBlock.Value, $" {matchBlock.Value} ").Split(' ');
-                //TODO: more variants
                 double constant = strs[0].Equals("") ? 1 : GetDouble(strs[0].Replace(".", ","));
                 int exponent = !strs[2].Equals("") ? GetInt(strs[2]) : strs[1].Equals(matchBlock.Value) ? 1 : 0;
                 result.Add(new PolynomialBlock(constant, exponent));

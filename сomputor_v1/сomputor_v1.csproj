@@ -45,6 +45,7 @@
         <Compile Include="Exception\ExceptionNoSolutions.cs" />
         <Compile Include="Polynomial\Polynomial.cs" />
         <Compile Include="Polynomial\PolynomialBlock.cs" />
+        <Compile Include="Polynomial\Solver.cs" />
         <Compile Include="Program.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
     </ItemGroup>

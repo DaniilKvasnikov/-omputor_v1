@@ -1,4 +1,4 @@
-﻿namespace сomputor_v1
+﻿namespace сomputor_v1.Polynomial
 {
     public class PolynomialBlock
     {
@@ -20,11 +20,6 @@
         public void ConstantRevert()
         {
             constant = -constant;
-        }
-
-        public double GetSortParam()
-        {
-            return exponent;
         }
 
         public int GetExponent()

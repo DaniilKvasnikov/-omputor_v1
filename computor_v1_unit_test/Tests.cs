@@ -5,6 +5,7 @@ using NUnit.Framework;
 using NUnit.Framework.Internal;
 using сomputor_v1;
 using сomputor_v1.Exception;
+using сomputor_v1.Polynomial;
 
 namespace computor_v1_unit_test
 {
@@ -138,6 +139,7 @@ namespace computor_v1_unit_test
         [TestCase("-4x^2 - 7x +12 = 0", new double[]{-2.81552, 1.0655})]
         [TestCase("2x^2 - 4x - 2 = 0", new double[]{2.414213, -0.414213})]
         [TestCase("x² - 64 = 0", new double[]{8, -8})]
+        [TestCase("x^2+4x+4=0", new double[]{-2})]
         public void QuadraticTest(string arg, double[] results)
         {
             Polynomial p = new Polynomial(arg);
@@ -152,6 +154,9 @@ namespace computor_v1_unit_test
         public double TOLERANCE { get; } = 0.001;
 
         [TestCase(typeof(ExceptionStringFormat), "5 * X^0 + 4 * X^1 - 9.3 * X^2 = = 1 * X^0")]
+        [TestCase(typeof(ExceptionStringFormat), "a = d")]
+        [TestCase(typeof(ExceptionStringFormat), "6x^2 + 11x - 35")]
+        [TestCase(typeof(ExceptionStringFormat), "x + a = 0 - d")]
         [TestCase(typeof(ExceptionEachRealNumber), "0 = 0")]
         [TestCase(typeof(ExceptionNoSolutions), "1 = 0")]
         [TestCase(typeof(ExceptionDegreeLimit), "1x^3 = 0")]
@@ -160,6 +165,7 @@ namespace computor_v1_unit_test
         [TestCase(typeof(ExceptionNegativeDiscriminant), "-2x² - 4 = 0")]
         [TestCase(typeof(ExceptionStringFormat), "9.1x^.2 = 0")]
         [TestCase(typeof(ExceptionStringFormat), "9.1x.2 = 0")]
+        [TestCase(typeof(ExceptionStringFormat), "123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789.123456789123456789x^2 = 0")]
         public void ExceptionTest(System.Type type, string arg)
         {
             Assert.Throws( type, () => new Polynomial(arg));
