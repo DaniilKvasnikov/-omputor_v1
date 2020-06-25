@@ -38,6 +38,14 @@
         <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
+        <Content Include="tests\**\*">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Update="Tests\Test.txt">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+    <ItemGroup>
         <Compile Include="Exception\ExceptionDegreeLimit.cs" />
         <Compile Include="Exception\ExceptionEachRealNumber.cs" />
         <Compile Include="Exception\ExceptionNegativeDiscriminant.cs" />

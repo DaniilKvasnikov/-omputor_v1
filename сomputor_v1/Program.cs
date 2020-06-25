@@ -17,10 +17,11 @@ namespace сomputor_v1
             {
                 try
                 {
-                    new Polynomial.Polynomial(arg);
+                    var polynomial = new Polynomial.Polynomial(arg);
                 }
                 catch (System.Exception)
                 {
+                    // ignored
                 }
             }
 

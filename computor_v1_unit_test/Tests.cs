@@ -1,5 +1,7 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text.RegularExpressions;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
@@ -127,8 +129,8 @@ namespace computor_v1_unit_test
         {
             Polynomial p = new Polynomial(arg);
             var answer = p.GetAnswers();
-            Assert.IsTrue(answer.Length == 1);
-            Assert.IsTrue(Math.Abs(answer[0] - result) < TOLERANCE);
+            Assert.AreEqual(answer.Length, 1);
+            Assert.AreEqual(answer[0], result);
         }
 
         [TestCase("6x^2 + 11x - 35 = 0", new[] {1.6666, -3.5})]
@@ -144,14 +146,14 @@ namespace computor_v1_unit_test
         {
             Polynomial p = new Polynomial(arg);
             var answer = p.GetAnswers();
-            Assert.IsTrue(answer.Length == results.Length);
+            Assert.AreEqual(answer.Length, results.Length);
             for (int i = 0; i < results.Length; i++)
             {
                 Assert.IsTrue(Math.Abs(answer[i] - results[i]) < TOLERANCE);
             }
         }
 
-        public double TOLERANCE { get; } = 0.001;
+        public double TOLERANCE { get; } = 0.0001;
 
         [TestCase(typeof(ExceptionStringFormat), "5 * X^0 + 4 * X^1 - 9.3 * X^2 = = 1 * X^0")]
         [TestCase(typeof(ExceptionStringFormat), "a = d")]
@@ -171,5 +173,29 @@ namespace computor_v1_unit_test
             Assert.Throws( type, () => new Polynomial(arg));
         }
 
+        [TestCase("Tests\\Test.txt")]
+        public void TestFromFile(string filePath)
+        {
+            Assert.IsTrue(File.Exists(filePath));
+            var strs = File.ReadAllLines(filePath);
+            foreach (string str in strs)
+            {
+                var newFile = filePath + ".log";
+                //TODO:write to file
+                Console.WriteLine($"{str}");
+                Program.Main(new[] {str});
+                Console.WriteLine("//------------------------------------");
+            }
+        }
+        
+        [TestCase("Tests")]
+        public void TestFromDir(string dirPath)
+        {
+            string [] fileEntries = Directory.GetFiles(dirPath);
+            foreach (var fileEntry in fileEntries)
+            {
+                TestFromFile(fileEntry);
+            }
+        }
     }
 }
