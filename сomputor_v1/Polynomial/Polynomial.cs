@@ -163,6 +163,8 @@ namespace сomputor_v1.Polynomial
         {
             if (str.Equals("-"))
                 return -1.0;
+            if (str.Equals("+"))
+                return 1.0;
             if (!double.TryParse(str, out var res))
                 throw new ExceptionStringFormat($"Double format error: {str}");
             return res;

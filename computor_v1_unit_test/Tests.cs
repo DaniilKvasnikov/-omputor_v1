@@ -142,6 +142,7 @@ namespace computor_v1_unit_test
         [TestCase("2x^2 - 4x - 2 = 0", new double[]{2.414213, -0.414213})]
         [TestCase("x² - 64 = 0", new double[]{8, -8})]
         [TestCase("x^2+4x+4=0", new double[]{-2})]
+        [TestCase("5 + X +4 *x = X ^ 2 + 1 *  X ^ 2", new double[]{-0.7655, 3.2655})]
         public void QuadraticTest(string arg, double[] results)
         {
             Polynomial p = new Polynomial(arg);
@@ -165,6 +166,7 @@ namespace computor_v1_unit_test
         [TestCase(typeof(ExceptionNegativeDiscriminant), "9.1x^2 − 6x + 2 = 0")]
         [TestCase(typeof(ExceptionNegativeDiscriminant), "9x² + 49 = 0")]
         [TestCase(typeof(ExceptionNegativeDiscriminant), "-2x² - 4 = 0")]
+        [TestCase(typeof(ExceptionNegativeDiscriminant), "5 + 3 * X + X ^ 2 = 1 * X ^ 0 + 0 *  X ^ 1")]
         [TestCase(typeof(ExceptionStringFormat), "9.1x^.2 = 0")]
         [TestCase(typeof(ExceptionStringFormat), "9.1x.2 = 0")]
         [TestCase(typeof(ExceptionStringFormat), "123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789.123456789123456789x^2 = 0")]
