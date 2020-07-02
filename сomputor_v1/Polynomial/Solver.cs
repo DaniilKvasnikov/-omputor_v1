@@ -57,9 +57,9 @@ namespace сomputor_v1.Polynomial
             var discriminant = b * b - 4 * a * c;
             if (discriminant < 0)
             {
-                var exception = string.Format("discriminant({2})<0. " +
-                                              "A negative discriminant indicates that neither of the solutions are real numbers.)" +
-                                              "\nAnd answer is (-{0} ± √{1}) / {2}", b, discriminant, 2 * a);
+                var exception = string.Format($"discriminant({discriminant})<0." +
+                                              $"A negative discriminant indicates that neither of the solutions are real numbers.)\n" +
+                                              $"And answer is (-{b} + √{discriminant}) / {2 * a} or (-{b} - √{discriminant}) / {2 * a}");
                 throw new ExceptionNegativeDiscriminant(exception);
             }
 
