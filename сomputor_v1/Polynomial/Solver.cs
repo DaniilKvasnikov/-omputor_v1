@@ -6,7 +6,7 @@ namespace сomputor_v1.Polynomial
 {
     public class Solver
     {
-        private PolynomialBlock[] polynomialBlocks;
+        private readonly PolynomialBlock[] polynomialBlocks;
 
         public Solver(PolynomialBlock[] polynomialBlocks)
         {
@@ -58,7 +58,7 @@ namespace сomputor_v1.Polynomial
             if (discriminant < 0)
             {
                 var exception = string.Format($"discriminant({discriminant})<0." +
-                                              $"A negative discriminant indicates that neither of the solutions are real numbers.)\n" +
+                                              "A negative discriminant indicates that neither of the solutions are real numbers.)\n" +
                                               $"And answer is (-{b} + √{discriminant}) / {2 * a} or (-{b} - √{discriminant}) / {2 * a}");
                 throw new ExceptionNegativeDiscriminant(exception);
             }

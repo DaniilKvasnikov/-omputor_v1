@@ -3,7 +3,7 @@
     public class PolynomialBlock
     {
         private double constant;
-        private int exponent;
+        private readonly int exponent;
 
         public PolynomialBlock(double constant, int exponent)
         {
@@ -13,7 +13,7 @@
 
         public override string ToString()
         {
-            string str = constant + "*X^" + exponent;
+            var str = constant + "*X^" + exponent;
             return str;
         }
 

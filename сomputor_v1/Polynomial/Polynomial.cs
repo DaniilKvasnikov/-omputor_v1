@@ -8,30 +8,16 @@ namespace сomputor_v1.Polynomial
 {
     public class Polynomial
     {
-        private string input;
-        private PolynomialBlock[] polynomialBlocks;
-        private double[] answers;
-        private Solver solver;
-        
         public static string patternFloat = @"\d*(?:\.\d*)?";
-        public static string patternBlock = $@"((^|\+)|-)(({patternFloat})?\*?X(\^{patternFloat})?)|((^|\+|-){patternFloat})";
-        public static string patternFull = $@"({patternBlock})+";
 
-        public static bool CorrectInput(string input)
-        {
-            string[] inputs = input.Split('=');
-            if (inputs.Length != 2)
-                throw new ExceptionStringFormat(input);
-            foreach (string s in inputs)
-            {
-                var pattern = patternFull;
-                var IsMatch = Regex.IsMatch(s, pattern);
-                var match = Regex.Match(s, pattern);
-                if (!IsMatch || match.Length == 0 || !match.Value.Equals(s))
-                    return false;
-            }
-            return true;
-        }
+        public static string patternBlock =
+            $@"((^|\+)|-)(({patternFloat})?\*?X(\^{patternFloat})?)|((^|\+|-){patternFloat})";
+
+        public static string patternFull = $@"({patternBlock})+";
+        private readonly double[] answers;
+        private readonly string input;
+        private readonly PolynomialBlock[] polynomialBlocks;
+        private readonly Solver solver;
 
         public Polynomial(string input)
         {
@@ -40,18 +26,18 @@ namespace сomputor_v1.Polynomial
                 this.input = StringPreprocess(input);
                 if (!CorrectInput(this.input))
                     throw new ExceptionStringFormat(this.input);
-                
+
                 polynomialBlocks = InitPolynomialBlocks(this.input);
                 solver = new Solver(polynomialBlocks);
-                
+
                 Console.Write("Reduced form: {0}\n", GetReducedForm());
-                
+
                 var degree = GetPolynomialDegree();
                 Console.Write("Polynomial degree: {0}\n", degree);
-                
+
                 answers = solver.GetAnswer(degree);
-                
-                double[] results = solver.CheckAnswer(answers);
+
+                var results = solver.CheckAnswer(answers);
                 Console.WriteLine("The solutions are:");
                 for (var i = 0; i < answers.Length; i++)
                 {
@@ -67,9 +53,26 @@ namespace сomputor_v1.Polynomial
             }
         }
 
+        public static bool CorrectInput(string input)
+        {
+            var inputs = input.Split('=');
+            if (inputs.Length != 2)
+                throw new ExceptionStringFormat(input);
+            foreach (var s in inputs)
+            {
+                var pattern = patternFull;
+                var IsMatch = Regex.IsMatch(s, pattern);
+                var match = Regex.Match(s, pattern);
+                if (!IsMatch || match.Length == 0 || !match.Value.Equals(s))
+                    return false;
+            }
+
+            return true;
+        }
+
         private PolynomialBlock[] InitPolynomialBlocks(string input)
         {
-            PolynomialBlock[] polynomialBlocks = GetSubStrings(input);
+            var polynomialBlocks = GetSubStrings(input);
             PrintPolynomialBlocks(polynomialBlocks, "Parsing result");
             polynomialBlocks = CutExpression(polynomialBlocks);
             PrintPolynomialBlocks(polynomialBlocks, "Expression and sort result");
@@ -79,10 +82,7 @@ namespace сomputor_v1.Polynomial
         private void PrintPolynomialBlocks(PolynomialBlock[] polynomialBlocks, string Name)
         {
             Console.Write($"{Name}: ");
-            foreach (PolynomialBlock polynomialBlock in polynomialBlocks)
-            {
-                Console.Write($"({polynomialBlock})");
-            }
+            foreach (var polynomialBlock in polynomialBlocks) Console.Write($"({polynomialBlock})");
             Console.WriteLine("");
         }
 
@@ -93,7 +93,7 @@ namespace сomputor_v1.Polynomial
 
         private string GetReducedForm()
         {
-            string str = "";
+            var str = "";
             for (var i = 0; i < polynomialBlocks.Length; i++)
             {
                 var subString = polynomialBlocks[i];
@@ -114,7 +114,7 @@ namespace сomputor_v1.Polynomial
 
         private PolynomialBlock[] CutExpression(PolynomialBlock[] polynomialBlocks1)
         {
-            List<PolynomialBlock> newpolynomialBlocks = new List<PolynomialBlock>();
+            var newpolynomialBlocks = new List<PolynomialBlock>();
             foreach (var block in polynomialBlocks1)
             {
                 var to = newpolynomialBlocks.FirstOrDefault(e =>
@@ -134,15 +134,15 @@ namespace сomputor_v1.Polynomial
 
         private PolynomialBlock[] GetSubStrings(string s)
         {
-            var subStrings = s.Split(new[] {'='});
+            var subStrings = s.Split('=');
             if (subStrings.Length != 2)
                 throw new ExceptionStringFormat(s);
 
-            List<PolynomialBlock> result = new List<PolynomialBlock>();
-            
+            var result = new List<PolynomialBlock>();
+
             result.AddRange(GetPolynomialBlock(subStrings[0]));
-            
-            List<PolynomialBlock> right = GetPolynomialBlock(subStrings[1]);
+
+            var right = GetPolynomialBlock(subStrings[1]);
             foreach (var block in right)
                 block.ConstantRevert();
             result.AddRange(right);
@@ -152,14 +152,16 @@ namespace сomputor_v1.Polynomial
 
         private List<PolynomialBlock> GetPolynomialBlock(string subString)
         {
-            List<PolynomialBlock> result = new List<PolynomialBlock>();
-            MatchCollection matches = Regex.Matches(subString, patternBlock);
+            var result = new List<PolynomialBlock>();
+            var matches = Regex.Matches(subString, patternBlock);
             foreach (Match match in matches)
             {
-                var matchBlock = Regex.Match(match.Value, $"((\\*?X\\^?))");
-                string[] strs = matchBlock.Value.Length == 0 ? new []{match.Value, "", "0"} : match.Value.Replace(matchBlock.Value, $" {matchBlock.Value} ").Split(' ');
-                double constant = strs[0].Equals("") ? 1 : GetDouble(strs[0].Replace(".", ","));
-                int exponent = !strs[2].Equals("") ? GetInt(strs[2]) : strs[1].Equals(matchBlock.Value) ? 1 : 0;
+                var matchBlock = Regex.Match(match.Value, "((\\*?X\\^?))");
+                var strs = matchBlock.Value.Length == 0
+                    ? new[] {match.Value, "", "0"}
+                    : match.Value.Replace(matchBlock.Value, $" {matchBlock.Value} ").Split(' ');
+                var constant = strs[0].Equals("") ? 1 : GetDouble(strs[0].Replace(".", ","));
+                var exponent = !strs[2].Equals("") ? GetInt(strs[2]) : strs[1].Equals(matchBlock.Value) ? 1 : 0;
                 result.Add(new PolynomialBlock(constant, exponent));
             }
 
@@ -176,7 +178,7 @@ namespace сomputor_v1.Polynomial
                 throw new ExceptionStringFormat($"Double format error: {str}");
             return res;
         }
-        
+
         private int GetInt(string str)
         {
             if (!int.TryParse(str, out var res))
@@ -189,7 +191,7 @@ namespace сomputor_v1.Polynomial
             return s.Replace(" ", "")
                 .Replace("²", "^2")
                 .Replace("−", "-")
-                    .ToUpper();
+                .ToUpper();
         }
     }
 }
