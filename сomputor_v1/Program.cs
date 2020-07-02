@@ -13,18 +13,14 @@ namespace сomputor_v1
                 return;
             }
 
-            foreach (var arg in args)
+            try
             {
-                try
-                {
-                    var polynomial = new Polynomial.Polynomial(arg);
-                }
-                catch (System.Exception)
-                {
-                    // ignored
-                }
+                var polynomial = new Polynomial.Polynomial(args[0]);
             }
-
+            catch (System.Exception)
+            {
+                // ignored
+            }
         }
     }
 }

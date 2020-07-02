@@ -13,9 +13,25 @@ namespace сomputor_v1.Polynomial
         private double[] answers;
         private Solver solver;
         
-        public static string patternFloat = "\\d*(\\.\\d+)?";
-        public static string patternBlock = $@"(^|\+|-)(({patternFloat}|-)?\*?X(\^?{patternFloat})?)|((^|\+|-){patternFloat})";
-        public static string patternFull = $@"({patternBlock})+({patternBlock})+";
+        public static string patternFloat = @"\d*(?:\.\d*)?";
+        public static string patternBlock = $@"((^|\+)|-)(({patternFloat})?\*?X(\^{patternFloat})?)|((^|\+|-){patternFloat})";
+        public static string patternFull = $@"({patternBlock})+";
+
+        public static bool CorrectInput(string input)
+        {
+            string[] inputs = input.Split('=');
+            if (inputs.Length != 2)
+                throw new ExceptionStringFormat(input);
+            foreach (string s in inputs)
+            {
+                var pattern = patternFull;
+                var IsMatch = Regex.IsMatch(s, pattern);
+                var match = Regex.Match(s, pattern);
+                if (!IsMatch || match.Length == 0 || !match.Value.Equals(s))
+                    return false;
+            }
+            return true;
+        }
 
         public Polynomial(string input)
         {
@@ -68,15 +84,6 @@ namespace сomputor_v1.Polynomial
                 Console.Write($"({polynomialBlock})");
             }
             Console.WriteLine("");
-        }
-
-        public static bool CorrectInput(string input)
-        {
-            var pattern = patternFull;
-            var IsMatch = Regex.IsMatch(input, pattern);
-            var matches = Regex.Matches(input, pattern);
-            string[] matchesString = (from Match match in matches select match.Value).Where(e => e.Length > 0).ToArray();
-            return IsMatch && matchesString.Length > 0;
         }
 
         private int GetPolynomialDegree()
@@ -180,7 +187,8 @@ namespace сomputor_v1.Polynomial
         public static string StringPreprocess(string s)
         {
             return s.Replace(" ", "")
-                    .Replace("²", "^2")
+                .Replace("²", "^2")
+                .Replace("−", "-")
                     .ToUpper();
         }
     }
