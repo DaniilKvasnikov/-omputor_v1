@@ -1,4 +1,4 @@
-﻿namespace сomputor_v1.Polynomial
+﻿namespace сomputorV1.Polynomial
 {
     public class PolynomialBlock
     {

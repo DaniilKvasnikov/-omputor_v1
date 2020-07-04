@@ -1,4 +1,4 @@
-﻿namespace сomputor_v1.Exception
+﻿namespace сomputorV1.Exception
 {
     public class ExceptionEachRealNumber : System.Exception
     {

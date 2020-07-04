@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using сomputor_v1.Exception;
+using сomputorV1.Exception;
 
-namespace сomputor_v1.Polynomial
+namespace сomputorV1.Polynomial
 {
     public class Polynomial
     {
@@ -24,7 +24,7 @@ namespace сomputor_v1.Polynomial
             try
             {
                 this.input = StringPreprocess(input);
-                if (!CorrectInput(this.input))
+                if (!StringChecker.CorrectInput(this.input))
                     throw new ExceptionStringFormat(this.input);
 
                 polynomialBlocks = InitPolynomialBlocks(this.input);
@@ -51,23 +51,6 @@ namespace сomputor_v1.Polynomial
                 Console.WriteLine(e.Message);
                 throw;
             }
-        }
-
-        public static bool CorrectInput(string input)
-        {
-            var inputs = input.Split('=');
-            if (inputs.Length != 2)
-                throw new ExceptionStringFormat(input);
-            foreach (var s in inputs)
-            {
-                var pattern = patternFull;
-                var IsMatch = Regex.IsMatch(s, pattern);
-                var match = Regex.Match(s, pattern);
-                if (!IsMatch || match.Length == 0 || !match.Value.Equals(s))
-                    return false;
-            }
-
-            return true;
         }
 
         private PolynomialBlock[] InitPolynomialBlocks(string input)

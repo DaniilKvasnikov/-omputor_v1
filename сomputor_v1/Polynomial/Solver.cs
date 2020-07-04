@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Linq;
-using сomputor_v1.Exception;
+using сomputorV1.Exception;
 
-namespace сomputor_v1.Polynomial
+namespace сomputorV1.Polynomial
 {
     public class Solver
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace сomputor_v1
+namespace сomputorV1
 {
     public class Program
     {

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.IO;
 using NUnit.Framework;
-using сomputor_v1;
-using сomputor_v1.Exception;
-using сomputor_v1.Polynomial;
+using сomputorV1;
+using сomputorV1.Exception;
+using сomputorV1.Polynomial;
 
 namespace computor_v1_unit_test
 {
@@ -162,6 +162,9 @@ namespace computor_v1_unit_test
         [TestCase(typeof(ExceptionNegativeDiscriminant), "5 + 3 * X + X ^ 2 = 1 * X ^ 0 + 0 *  X ^ 1")]
         [TestCase(typeof(ExceptionStringFormat), "9.1x^.2 = 0")]
         [TestCase(typeof(ExceptionStringFormat), "9.1x.2 = 0")]
+        [TestCase(typeof(ExceptionStringFormat), "9.1x2 = 0")]
+        [TestCase(typeof(ExceptionStringFormat), "9.1x^2  ++ 1= 0")]
+        [TestCase(typeof(ExceptionStringFormat), "9.1x2  + 1= 0")]
         [TestCase(typeof(ExceptionStringFormat),
             "123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789.123456789123456789x^2 = 0")]
         public void ExceptionTest(Type type, string arg)
