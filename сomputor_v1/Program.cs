@@ -14,11 +14,11 @@ namespace сomputorV1
 
             try
             {
-                var polynomial = new Polynomial.Polynomial(args[0]);
+                new Polynomial.Polynomial(args[0]);
             }
-            catch (System.Exception)
+            catch (System.Exception e)
             {
-                // ignored
+                Console.WriteLine(e);
             }
         }
     }
