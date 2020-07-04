@@ -119,7 +119,12 @@ namespace computor_v1_unit_test
         //     Assert.IsTrue(currFloat == res);
         // }
 
+        [TestCase(".1x = .1", 1)]
+        [TestCase("-.1x = -1", 10)]
+        [TestCase("-.1*x = -.1", 1)]
+        [TestCase("-.1+x = .9", 1)]
         [TestCase("x = 1", 1)]
+        [TestCase("x - 1.0 = 0", 1)]
         [TestCase("-x = 2", -2)]
         public void LinearTest(string arg, double result)
         {
@@ -163,8 +168,11 @@ namespace computor_v1_unit_test
         [TestCase(typeof(ExceptionStringFormat), "9.1x^.2 = 0")]
         [TestCase(typeof(ExceptionStringFormat), "9.1x.2 = 0")]
         [TestCase(typeof(ExceptionStringFormat), "9.1x2 = 0")]
+        [TestCase(typeof(ExceptionStringFormat), "9.1*2 = 0")]
         [TestCase(typeof(ExceptionStringFormat), "9.1x^2  ++ 1= 0")]
         [TestCase(typeof(ExceptionStringFormat), "9.1x2  + 1= 0")]
+        [TestCase(typeof(ExceptionStringFormat), "9.x^2  + 1= 0")]
+        [TestCase(typeof(ExceptionStringFormat), "9x^2  + 1= 0 = 1")]
         [TestCase(typeof(ExceptionStringFormat),
             "123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789.123456789123456789x^2 = 0")]
         public void ExceptionTest(Type type, string arg)

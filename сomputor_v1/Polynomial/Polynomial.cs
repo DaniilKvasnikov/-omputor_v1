@@ -118,8 +118,6 @@ namespace сomputorV1.Polynomial
         private PolynomialBlock[] GetSubStrings(string s)
         {
             var subStrings = s.Split('=');
-            if (subStrings.Length != 2)
-                throw new ExceptionStringFormat(s);
 
             var result = new List<PolynomialBlock>();
 
