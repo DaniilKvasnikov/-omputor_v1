@@ -8,12 +8,11 @@ namespace сomputorV1.Polynomial
 {
     public class Polynomial
     {
-        public static string patternFloat = @"\d*(?:\.\d*)?";
+        public static string patternFloat = @"(\d*(\.\d+)?)";
 
         public static string patternBlock =
-            $@"((^|\+)|-)(({patternFloat})?\*?X(\^{patternFloat})?)|((^|\+|-){patternFloat})";
+            $@"(\+|-)?(({patternFloat})?\*?X(\^{patternFloat})?)|((\+|-)?{patternFloat})";
 
-        public static string patternFull = $@"({patternBlock})+";
         private readonly double[] answers;
         private readonly string input;
         private readonly PolynomialBlock[] polynomialBlocks;
@@ -51,6 +50,24 @@ namespace сomputorV1.Polynomial
                 Console.WriteLine(e.Message);
                 throw;
             }
+        }
+
+        private List<PolynomialBlock> GetPolynomialBlock(string subString)
+        {
+            var result = new List<PolynomialBlock>();
+            var matches = Regex.Matches(subString, patternBlock);
+            foreach (Match match in matches)
+            {
+                var matchBlock = Regex.Match(match.Value, "((\\*?X\\^?))");
+                var strs = matchBlock.Value.Length == 0
+                    ? new[] {match.Value, "", "0"}
+                    : match.Value.Replace(matchBlock.Value, $" {matchBlock.Value} ").Split(' ');
+                var constant = strs[0].Equals("") ? 1 : GetDouble(strs[0].Replace(".", ","));
+                var exponent = !strs[2].Equals("") ? GetInt(strs[2]) : strs[1].Equals(matchBlock.Value) ? 1 : 0;
+                result.Add(new PolynomialBlock(constant, exponent));
+            }
+
+            return result;
         }
 
         private PolynomialBlock[] InitPolynomialBlocks(string input)
@@ -129,24 +146,6 @@ namespace сomputorV1.Polynomial
             result.AddRange(right);
 
             return result.ToArray();
-        }
-
-        private List<PolynomialBlock> GetPolynomialBlock(string subString)
-        {
-            var result = new List<PolynomialBlock>();
-            var matches = Regex.Matches(subString, patternBlock);
-            foreach (Match match in matches)
-            {
-                var matchBlock = Regex.Match(match.Value, "((\\*?X\\^?))");
-                var strs = matchBlock.Value.Length == 0
-                    ? new[] {match.Value, "", "0"}
-                    : match.Value.Replace(matchBlock.Value, $" {matchBlock.Value} ").Split(' ');
-                var constant = strs[0].Equals("") ? 1 : GetDouble(strs[0].Replace(".", ","));
-                var exponent = !strs[2].Equals("") ? GetInt(strs[2]) : strs[1].Equals(matchBlock.Value) ? 1 : 0;
-                result.Add(new PolynomialBlock(constant, exponent));
-            }
-
-            return result;
         }
 
         private double GetDouble(string str)
