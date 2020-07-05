@@ -18,7 +18,7 @@ namespace сomputorV1
             }
             catch (System.Exception e)
             {
-                Console.WriteLine(e);
+                Console.WriteLine(e.Message);
             }
         }
     }

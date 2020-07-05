@@ -2,7 +2,7 @@
 {
     public class ExceptionEachRealNumber : System.Exception
     {
-        public ExceptionEachRealNumber(string message) : base(message)
+        public ExceptionEachRealNumber() : base("Each real number is a solution.")
         {
         }
     }

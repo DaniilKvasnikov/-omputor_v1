@@ -27,6 +27,7 @@ namespace сomputorV1.Polynomial
                     throw new ExceptionStringFormat(this.input);
 
                 polynomialBlocks = InitPolynomialBlocks(this.input);
+                if (polynomialBlocks.Length == 0) throw new ExceptionEachRealNumber();
                 solver = new Solver(polynomialBlocks);
 
                 Console.Write("Reduced form: {0}\n", GetReducedForm());
@@ -40,9 +41,7 @@ namespace сomputorV1.Polynomial
                 Console.WriteLine("The solutions are:");
                 for (var i = 0; i < answers.Length; i++)
                 {
-                    var answer = answers[i];
-                    var result = results[i];
-                    Console.WriteLine("x={0}(f(x) = {1})", answer, result);
+                    Console.WriteLine($"x={answers[i]}(f(x) = {results[i]})");
                 }
             }
             catch (System.Exception e)
@@ -58,6 +57,7 @@ namespace сomputorV1.Polynomial
             var matches = Regex.Matches(subString, patternBlock);
             foreach (Match match in matches)
             {
+                if (match.Value.Length == 0) continue;
                 var matchBlock = Regex.Match(match.Value, "((\\*?X\\^?))");
                 var strs = matchBlock.Value.Length == 0
                     ? new[] {match.Value, "", "0"}

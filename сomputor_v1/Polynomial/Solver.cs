@@ -72,8 +72,7 @@ namespace сomputorV1.Polynomial
         private double[] ZerroExponent()
         {
             var c = GetConstant(0);
-            if (c == 0)
-                throw new ExceptionEachRealNumber("Each real number is a solution.");
+            if (c == 0) throw new ExceptionEachRealNumber();
             throw new ExceptionNoSolutions("There are no solutions.");
         }
 

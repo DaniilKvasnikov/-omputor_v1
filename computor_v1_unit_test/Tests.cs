@@ -50,6 +50,7 @@ namespace computor_v1_unit_test
         [TestCase(typeof(ExceptionStringFormat), "6x^2 + 11x - 35")]
         [TestCase(typeof(ExceptionStringFormat), "x + a = 0 - d")]
         [TestCase(typeof(ExceptionEachRealNumber), "0 = 0")]
+        [TestCase(typeof(ExceptionEachRealNumber), "0x = 0")]
         [TestCase(typeof(ExceptionNoSolutions), "1 = 0")]
         [TestCase(typeof(ExceptionDegreeLimit), "1x^3 = 0")]
         [TestCase(typeof(ExceptionNegativeDiscriminant), "9.1x^2 − 6x + 2 = 0")]
@@ -77,13 +78,20 @@ namespace computor_v1_unit_test
         public void TestFromFile(string filePath)
         {
             Assert.IsTrue(File.Exists(filePath));
+            Console.WriteLine($"{filePath}");
             var strs = File.ReadAllLines(filePath);
             foreach (var str in strs)
             {
-                var newFile = filePath + ".log";
-                //TODO:write to file
                 Console.WriteLine($"{str}");
-                Program.Main(new[] {str});
+                try
+                {
+                    new Polynomial(str);
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+
                 Console.WriteLine("//------------------------------------");
             }
         }
