@@ -23,8 +23,7 @@ namespace сomputorV1.Polynomial
             try
             {
                 this.input = StringPreprocess(input);
-                if (!StringChecker.CorrectInput(this.input))
-                    throw new ExceptionStringFormat(this.input);
+                StringChecker.CheckInput(this.input);
 
                 polynomialBlocks = InitPolynomialBlocks(this.input);
                 if (polynomialBlocks.Length == 0) throw new ExceptionEachRealNumber();
@@ -155,14 +154,14 @@ namespace сomputorV1.Polynomial
             if (str.Equals("+"))
                 return 1.0;
             if (!double.TryParse(str, out var res))
-                throw new ExceptionStringFormat($"Double format error: {str}");
+                throw new ExceptionStringFormat($"Double parse error: {str}");
             return res;
         }
 
         private int GetInt(string str)
         {
             if (!int.TryParse(str, out var res))
-                throw new ExceptionStringFormat($"Int format error: {str}");
+                throw new ExceptionStringFormat($"Int parse error: {str}");
             return res;
         }
 

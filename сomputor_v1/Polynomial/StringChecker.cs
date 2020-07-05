@@ -5,19 +5,18 @@ namespace сomputorV1.Polynomial
 {
     public static class StringChecker
     {
-        public static bool CorrectInput(string input)
+        public static void CheckInput(string input)
         {
             var inputs = input.Split('=');
             if (inputs.Length != 2)
-                throw new ExceptionStringFormat(input);
+                throw new ExceptionStringFormat($"{input}. Error with \'=\' split.");
             foreach (var s in inputs)
-                if (!Correct(s))
-                    return false;
-
-            return true;
+            {
+                Correct(s);
+            }
         }
 
-        private static bool Correct(string s)
+        private static void Correct(string s)
         {
             var state = States.Start;
             for (var i = 0; i < s.Length; i++)
@@ -27,10 +26,10 @@ namespace сomputorV1.Polynomial
                 if (!nextChar)
                     i--;
                 if (state == States.Error)
-                    return false;
+                {
+                    throw new ExceptionStringFormat($"\n{new String(' ', i)}{s}\n");
+                }
             }
-
-            return true;
         }
 
         private static States GetNextState(States state, char c, out bool nextChar)
