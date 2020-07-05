@@ -2,8 +2,8 @@
 {
     public class PolynomialBlock
     {
-        private double constant;
         private readonly int exponent;
+        private double constant;
 
         public PolynomialBlock(double constant, int exponent)
         {

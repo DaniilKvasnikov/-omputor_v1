@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using NUnit.Framework;
-using сomputorV1;
 using сomputorV1.Exception;
 using сomputorV1.Polynomial;
 

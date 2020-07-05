@@ -38,10 +38,7 @@ namespace сomputorV1.Polynomial
 
                 var results = solver.CheckAnswer(answers);
                 Console.WriteLine("The solutions are:");
-                for (var i = 0; i < answers.Length; i++)
-                {
-                    Console.WriteLine($"x={answers[i]}(f(x) = {results[i]})");
-                }
+                for (var i = 0; i < answers.Length; i++) Console.WriteLine($"x={answers[i]}(f(x) = {results[i]})");
             }
             catch (System.Exception e)
             {

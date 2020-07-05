@@ -10,10 +10,7 @@ namespace сomputorV1.Polynomial
             var inputs = input.Split('=');
             if (inputs.Length != 2)
                 throw new ExceptionStringFormat($"{input}. Error with \'=\' split.");
-            foreach (var s in inputs)
-            {
-                Correct(s);
-            }
+            foreach (var s in inputs) Correct(s);
         }
 
         private static void Correct(string s)
@@ -25,10 +22,7 @@ namespace сomputorV1.Polynomial
                 state = GetNextState(state, c, out var nextChar);
                 if (!nextChar)
                     i--;
-                if (state == States.Error)
-                {
-                    throw new ExceptionStringFormat($"\n{new String(' ', i)}{s}\n");
-                }
+                if (state == States.Error) throw new ExceptionStringFormat($"\n{new string(' ', i)}{s}\n");
             }
         }
 
